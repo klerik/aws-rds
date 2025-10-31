@@ -62,12 +62,23 @@ export class AwsRdsStack extends cdk.Stack {
       handler: 'handler',
       vpc, // Lambda inside same VPC
       memorySize: 512,
+      bundling: {
+        externalModules: [
+          '@nestjs/websockets',
+          '@nestjs/microservices',
+          '@nestjs/websockets/socket-module',
+          '@nestjs/microservices/microservices-module',
+          'class-validator',
+          'class-transformer'
+        ],
+        forceDockerBundling: false
+      },
       environment: {
         DB_HOST: dbInstance.dbInstanceEndpointAddress,
         DB_PORT: '5432',
         DB_NAME: 'nestdb',
         DB_USER: 'postgres',
-        DB_PASSWORD: dbSecret.secretValueFromJson('password').toString(),
+        DB_PASSWORD: dbSecret.secretValueFromJson('password').unsafeUnwrap(),
       },
     });
 
